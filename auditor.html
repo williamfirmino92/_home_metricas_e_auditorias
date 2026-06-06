@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Apostila — Auditoria de Sistemas</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:       #E8622A;
+      --orange-dark:  #7A2E0E;
+      --orange-mid:   #C2500F;
+      --orange-light: #FEF3EC;
+      --orange-soft:  #FDE8D8;
+      --orange-muted: #F5C4A0;
+      --bg:           #f7f5f2;
+      --surface:      #ffffff;
+      --border:       #e8ddd4;
+      --text:         #2c1a0e;
+      --muted:        #7a5c44;
+      --code-bg:      #1a110a;
+      --code-text:    #f0e6dc;
+      --green:        #22c55e;
+      --red:          #ef4444;
+      --yellow:       #f59e0b;
+      --blue:         #3b82f6;
+      --sidebar-w:    270px;
+      --radius:       10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--orange-dark);
+      color: #f0ddd0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+      padding: 24px 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 16px;
+    }
+    .sidebar-logo .icon {
+      width: 32px; height: 32px;
+      background: var(--orange);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff; font-weight: 900;
+    }
+    .sidebar-logo span { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.5px; line-height: 1.3; }
+
+    .sidebar nav a {
+      display: block;
+      padding: 7px 20px;
+      color: #c9a98c;
+      text-decoration: none;
+      font-size: 13px;
+      border-left: 3px solid transparent;
+      transition: all .18s;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+      color: #fff;
+      background: rgba(255,255,255,0.07);
+      border-left-color: var(--orange);
+    }
+    .sidebar nav .section-title {
+      padding: 14px 20px 4px;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #a06040;
+      font-weight: 700;
+    }
+
+    /* ── Main ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 900px;
+      padding: 48px 48px 80px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--orange-dark) 0%, #a84020 60%, var(--orange-mid) 100%);
+      border-radius: var(--radius);
+      padding: 48px;
+      color: #fff;
+      margin-bottom: 40px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      color: #fdd5b5;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .hero h1 { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+    .hero p { color: #f0c9a8; font-size: 16px; max-width: 600px; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .tag {
+      background: rgba(255,255,255,0.12);
+      color: #fde8d0;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    /* ── Sections ── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      margin-bottom: 28px;
+      scroll-margin-top: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-num {
+      width: 36px; height: 36px; min-width: 36px;
+      background: var(--orange-dark);
+      color: #fff;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800;
+    }
+    .section h2 { font-size: 22px; font-weight: 700; color: var(--orange-dark); }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--orange-dark);
+      margin: 28px 0 12px;
+      padding-left: 12px;
+      border-left: 3px solid var(--orange);
+    }
+
+    h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin: 22px 0 8px;
+    }
+
+    p { margin-bottom: 14px; color: #3d2010; }
+    ul, ol { padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; color: #3d2010; }
+
+    /* ── Código ── */
+    pre {
+      background: var(--code-bg);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      border: 1px solid #2a1508;
+    }
+    pre code {
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--code-text);
+      background: none;
+      padding: 0;
+    }
+
+    .code-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2a1508;
+      color: #b07050;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      border: 1px solid #2a1508;
+      border-bottom: none;
+      margin-top: 18px;
+    }
+    .code-label + pre {
+      margin-top: 0;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    code:not(pre code) {
+      background: var(--orange-light);
+      color: var(--orange-dark);
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      border: 1px solid var(--orange-muted);
+    }
+
+    /* ── Tabelas ── */
+    .table-wrap { overflow-x: auto; margin: 18px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th {
+      background: var(--orange-dark);
+      color: #fff;
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+    }
+    td { padding: 9px 16px; border-bottom: 1px solid var(--border); color: #3d2010; }
+    tr:hover td { background: var(--orange-light); }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 600; color: var(--orange-dark); }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin: 16px 0;
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout.info    { background: #eff6ff; border-left: 4px solid var(--blue); color: #1e3a5f; }
+    .callout.tip     { background: #f0fdf4; border-left: 4px solid var(--green); color: #14532d; }
+    .callout.warning { background: #fffbeb; border-left: 4px solid var(--yellow); color: #78350f; }
+    .callout.danger  { background: #fff1ee; border-left: 4px solid var(--orange); color: #7a2e0e; }
+    .callout.success { background: #f0fdf4; border-left: 4px solid var(--green); color: #14532d; }
+    .callout strong { color: inherit; }
+
+    /* ── Diagrama ASCII ── */
+    .diagram {
+      background: #1a110a;
+      color: #c9a98c;
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      padding: 24px;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin: 18px 0;
+      white-space: pre;
+      border: 1px solid #2a1508;
+    }
+
+    /* ── Step badges ── */
+    .step-list { list-style: none; padding: 0; margin: 16px 0; }
+    .step-list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-list li:last-child { border-bottom: none; }
+    .step-badge {
+      min-width: 28px; height: 28px;
+      background: var(--orange);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Card grid (2 col) ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+    .card {
+      background: var(--orange-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .card-icon { font-size: 22px; margin-bottom: 8px; display: block; }
+    .card h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange-dark);
+      margin: 0 0 6px;
+      padding: 0; border: none;
+    }
+    .card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.6; }
+
+    /* ── Highlight box ── */
+    .highlight-box {
+      background: var(--orange-soft);
+      border: 1px solid var(--orange-muted);
+      border-left: 4px solid var(--orange);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin: 18px 0;
+    }
+    .highlight-box h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--orange-dark);
+      margin: 0 0 8px;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .highlight-box p { margin: 0; font-size: 14px; color: #5a2a10; }
+
+    /* ── Pill tags ── */
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pill.orange { background: var(--orange-soft); color: var(--orange-dark); border: 1px solid var(--orange-muted); }
+    .pill.green  { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .pill.blue   { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .pill.red    { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .pill.purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+    /* ── Responsivo ── */
+    @media (max-width: 860px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 20px 60px; }
+      .hero { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon">🔍</div>
+    <span>Auditoria de<br>Sistemas</span>
+  </div>
+  <nav>
+    <div class="section-title">Módulo 01</div>
+    <a href="#s1">1. Introdução à auditoria</a>
+    <a href="#s2">2. Interna × Externa</a>
+    <a href="#s3">3. Auditoria de TI</a>
+    <a href="#s4">4. Papel do auditor</a>
+    <a href="#s5">5. Relação com dev de software</a>
+
+    <div class="section-title">Módulo 02</div>
+    <a href="#s6">6. Planejamento</a>
+    <a href="#s7">7. Coleta de evidências</a>
+    <a href="#s8">8. Testes de controle</a>
+    <a href="#s9">9. Técnicas de auditoria</a>
+    <a href="#s10">10. Relatórios</a>
+
+    <div class="section-title">Módulo 03</div>
+    <a href="#s11">11. Controles internos</a>
+    <a href="#s12">12. Tipos de controles</a>
+    <a href="#s13">13. Controles no dev</a>
+    <a href="#s14">14. Controles na operação</a>
+    <a href="#s15">15. Governança de TI</a>
+
+    <div class="section-title">Módulo 04 — SOX</div>
+    <a href="#s16">16. Contexto da SOX</a>
+    <a href="#s17">17. Por que impacta TI</a>
+    <a href="#s18">18. Riscos e controles</a>
+    <a href="#s19">19. Responsabilidade legal</a>
+  </nav>
+</aside>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">📘 Apostila Completa · ADS</div>
+    <h1>Auditoria de Sistemas</h1>
+    <p>Fundamentos, técnicas, controles internos e conformidade legal aplicados ao contexto de desenvolvimento e operação de sistemas de informação.</p>
+    <div class="hero-tags">
+      <span class="tag">Métricas e Auditoria</span>
+      <span class="tag">Controles Internos</span>
+      <span class="tag">SOX</span>
+      <span class="tag">Governança de TI</span>
+      <span class="tag">COSO · COBIT</span>
+      <span class="tag">ISO 27001</span>
+    </div>
+  </div>
+
+  <!-- ══════════ MÓDULO 01 ══════════ -->
+  <section class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>O que é auditoria</h2>
+    </div>
+    <p>Auditoria é um processo <strong>sistemático, independente e documentado</strong> para obter e avaliar evidências objetivas a fim de determinar em que medida critérios preestabelecidos estão sendo cumpridos. Em outras palavras, é a verificação de que uma organização está fazendo o que diz que faz, da forma correta e dentro das normas aplicáveis.</p>
+    <p>O conceito vem originalmente da área contábil e financeira, mas se expandiu para abranger processos, sistemas, segurança, qualidade e tecnologia da informação. Em TI, a auditoria analisa se os sistemas, dados e processos tecnológicos suportam os objetivos do negócio de forma segura, eficiente e em conformidade com leis e políticas.</p>
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div><strong>Objetivo central:</strong> a auditoria <strong>não é punir</strong>, mas identificar riscos, falhas e oportunidades de melhoria para que a organização possa corrigir e evoluir seus processos.</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td>Sistemático</td><td>Segue um plano e metodologia definidos, não é aleatório</td></tr>
+          <tr><td>Independente</td><td>O auditor não pode auditar algo que ele mesmo criou ou gerencia</td></tr>
+          <tr><td>Documentado</td><td>Todas as evidências e conclusões são registradas formalmente</td></tr>
+          <tr><td>Evidências objetivas</td><td>Baseado em fatos verificáveis, não em opiniões</td></tr>
+          <tr><td>Critérios</td><td>Comparação com normas, políticas ou regulações previamente definidas</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Auditoria interna × externa</h2>
+    </div>
+    <p>As auditorias podem ser conduzidas por profissionais da própria organização (auditoria interna) ou por entidades independentes externas (auditoria externa). Cada uma tem propósito, abrangência e público-alvo distintos.</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🏢</span>
+        <h3>Auditoria Interna</h3>
+        <p>Realizada por equipe da própria empresa. Foco em melhoria contínua, controles internos e riscos operacionais. Resultados reportados à alta gestão e ao conselho.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <h3>Auditoria Externa</h3>
+        <p>Conduzida por firma independente, geralmente exigida por lei ou regulação. Emite opinião imparcial para acionistas, órgãos reguladores e mercado.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Critério</th><th>Interna</th><th>Externa</th></tr></thead>
+        <tbody>
+          <tr><td>Quem conduz</td><td>Funcionários da organização</td><td>Firma independente</td></tr>
+          <tr><td>Frequência</td><td>Contínua ou periódica</td><td>Anual (em geral)</td></tr>
+          <tr><td>Público do relatório</td><td>Gestão interna</td><td>Acionistas, reguladores</td></tr>
+          <tr><td>Foco principal</td><td>Eficiência e controle</td><td>Conformidade e transparência</td></tr>
+          <tr><td>Obrigatoriedade</td><td>Normalmente opcional</td><td>Frequentemente exigida por lei</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Auditoria de TI</h2>
+    </div>
+    <p>A auditoria de TI avalia os controles relacionados à infraestrutura tecnológica, sistemas, dados e processos. O objetivo é garantir que a TI entregue valor ao negócio, proteja os ativos de informação e opere com integridade.</p>
+    <p>A <strong>ISACA</strong> (Information Systems Audit and Control Association) define quatro grandes domínios: governança de TI, gerenciamento de serviços, controles de aplicações e segurança da informação.</p>
+    <div class="pill-row">
+      <span class="pill orange">Governança de TI</span>
+      <span class="pill green">Segurança da Informação</span>
+      <span class="pill blue">Controles de Aplicações</span>
+      <span class="pill purple">Gestão de Riscos</span>
+      <span class="pill orange">Continuidade de Negócios</span>
+      <span class="pill red">Conformidade Regulatória</span>
+    </div>
+    <div class="callout warning">
+      <span class="callout-icon">⚠️</span>
+      <div>Auditar TI vai além de verificar se os servidores estão funcionando. Envolve avaliar <strong>políticas, processos, pessoas e tecnologias</strong> de forma integrada.</div>
+    </div>
+  </section>
+
+  <section class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Papel do auditor de sistemas</h2>
+    </div>
+    <p>O auditor de sistemas combina conhecimento técnico em TI com habilidades analíticas de auditoria. Não é desenvolvedor nem operador, mas avalia criticamente como os sistemas são construídos, operados e controlados.</p>
+    <ol class="step-list">
+      <li><span class="step-badge">1</span><span><strong>Planejar a auditoria:</strong> definir escopo, objetivos, riscos a serem avaliados e recursos necessários para a execução.</span></li>
+      <li><span class="step-badge">2</span><span><strong>Coletar evidências:</strong> utilizar entrevistas, análise de logs, testes de controles e revisão de documentação.</span></li>
+      <li><span class="step-badge">3</span><span><strong>Avaliar controles:</strong> verificar se os controles implementados são adequados, eficazes e funcionam como esperado.</span></li>
+      <li><span class="step-badge">4</span><span><strong>Comunicar resultados:</strong> elaborar relatórios claros com achados, riscos identificados e recomendações de melhoria.</span></li>
+    </ol>
+  </section>
+
+  <section class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Relação com desenvolvimento de software</h2>
+    </div>
+    <p>A auditoria está diretamente relacionada ao SDLC (Software Development Life Cycle). Desenvolvedores criam sistemas que processam, armazenam e transmitem dados — é sobre esses sistemas que a auditoria irá agir.</p>
+    <div class="highlight-box">
+      <h4>🔗 Conexão fundamental</h4>
+      <p>Todo sistema que processa dados financeiros, pessoais ou estratégicos será objeto de auditoria em algum momento. Conhecer os critérios de auditoria durante o desenvolvimento economiza retrabalho e reduz riscos legais.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fase do SDLC</th><th>Interesse do auditor</th></tr></thead>
+        <tbody>
+          <tr><td>Levantamento de requisitos</td><td>Requisitos de segurança e conformidade foram considerados?</td></tr>
+          <tr><td>Design</td><td>A arquitetura suporta controles de acesso e rastreabilidade?</td></tr>
+          <tr><td>Desenvolvimento</td><td>O código segue boas práticas de segurança? Há code review?</td></tr>
+          <tr><td>Testes</td><td>Existem testes de segurança? Os erros são tratados corretamente?</td></tr>
+          <tr><td>Deploy e operação</td><td>O sistema gera logs? Há controle de acesso ao ambiente produtivo?</td></tr>
+          <tr><td>Manutenção</td><td>Mudanças passam por processo de gerenciamento de mudanças?</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ MÓDULO 02 ══════════ -->
+  <section class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Planejamento de auditoria</h2>
+    </div>
+    <p>O planejamento é a fase mais crítica do processo de auditoria. Um planejamento inadequado compromete a eficácia de todo o trabalho. Nessa etapa, define-se o que será auditado, como e por quê, considerando os riscos da organização e os recursos disponíveis.</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <h3>Definição do escopo</h3>
+        <p>Delimitar quais sistemas, processos ou unidades organizacionais serão avaliados no ciclo de auditoria.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <h3>Avaliação de riscos</h3>
+        <p>Identificar os principais riscos que podem afetar os objetivos organizacionais e priorizar o que merece atenção.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📅</span>
+        <h3>Cronograma e recursos</h3>
+        <p>Estimar o tempo, pessoal especializado e ferramentas necessárias para executar a auditoria de forma adequada.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📋</span>
+        <h3>Programa de auditoria</h3>
+        <p>Documento que detalha os procedimentos específicos a serem executados para cada área ou objetivo de auditoria.</p>
+      </div>
+    </div>
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div>O <strong>programa de auditoria</strong> (audit program) é o "roteiro" que guia o auditor durante a execução. Ele lista cada procedimento, quem é responsável e qual evidência deve ser obtida.</div>
+    </div>
+  </section>
+
+  <section class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Coleta de evidências</h2>
+    </div>
+    <p>Evidências são a base de qualquer conclusão de auditoria. Uma evidência válida deve ser <strong>suficiente</strong> (em quantidade), <strong>confiável</strong> (fonte idônea), <strong>relevante</strong> (relacionada ao objetivo) e <strong>útil</strong> (que ajude a atingir a conclusão).</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo de evidência</th><th>Exemplos em TI</th><th>Confiabilidade</th></tr></thead>
+        <tbody>
+          <tr><td>Física</td><td>Foto de servidor sem rack trancado, impressão de relatório</td><td>Alta</td></tr>
+          <tr><td>Documental</td><td>Políticas, contratos, logs de sistema, e-mails</td><td>Alta (se autêntica)</td></tr>
+          <tr><td>Testimonial</td><td>Depoimentos em entrevista, declarações</td><td>Média</td></tr>
+          <tr><td>Analítica</td><td>Análise de tendências, comparações, CAATs</td><td>Alta (se bem aplicada)</td></tr>
+          <tr><td>Observacional</td><td>Observação direta de um processo sendo executado</td><td>Alta</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout tip">
+      <span class="callout-icon">✅</span>
+      <div><strong>CAATs</strong> (Computer-Assisted Audit Techniques) são ferramentas e técnicas de auditoria assistidas por computador, como scripts SQL para analisar bases de dados e identificar transações suspeitas.</div>
+    </div>
+  </section>
+
+  <section class="section" id="s8">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Testes de controle</h2>
+    </div>
+    <p>Os testes de controle verificam se os controles implementados estão operando eficazmente. Em auditoria de TI, são fundamentais para avaliar a confiabilidade dos sistemas.</p>
+    <ol class="step-list">
+      <li><span class="step-badge">1</span><span><strong>Teste de existência:</strong> verificar se o controle está implementado (ex: existe uma política de senhas?)</span></li>
+      <li><span class="step-badge">2</span><span><strong>Teste de funcionamento:</strong> verificar se o controle funciona como descrito (ex: a política de senhas é realmente aplicada pelo sistema?)</span></li>
+      <li><span class="step-badge">3</span><span><strong>Teste de eficácia:</strong> verificar se o controle alcança o objetivo pretendido (ex: o controle de senhas previne acessos não autorizados?)</span></li>
+      <li><span class="step-badge">4</span><span><strong>Teste de continuidade:</strong> verificar se o controle operou de forma consistente durante todo o período auditado.</span></li>
+    </ol>
+    <div class="code-label">📄 Exemplo — Teste de controle de acesso via SQL</div>
+    <pre><code>-- Verificar usuários com acesso privilegiado não autorizado
+SELECT user_id, username, role, last_access
+FROM system_users
+WHERE role IN ('ADMIN', 'DBA', 'ROOT')
+  AND user_id NOT IN (
+    SELECT user_id FROM authorized_privileged_users
+  )
+ORDER BY last_access DESC;</code></pre>
+  </section>
+
+  <section class="section" id="s9">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Entrevistas, documentos e observação</h2>
+    </div>
+    <p>As principais técnicas qualitativas de coleta de evidências são entrevistas, análise de documentação e observação direta. Cada uma tem vantagens e limitações.</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🗣️</span>
+        <h3>Entrevistas</h3>
+        <p>Conversas estruturadas com gestores, desenvolvedores e operadores de TI. Úteis para obter contexto, mas dependem da boa-fé do entrevistado.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📄</span>
+        <h3>Análise documental</h3>
+        <p>Revisão de políticas, contratos, arquiteturas, logs e registros de mudanças. Evidência mais objetiva, mas documentos podem estar desatualizados.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <h3>Observação direta</h3>
+        <p>O auditor acompanha a execução real de um processo. Revela discrepâncias entre o documentado e o praticado.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔄</span>
+        <h3>Re-execução</h3>
+        <p>O auditor executa ele mesmo um procedimento para verificar se os resultados são consistentes com os descritos. Alta confiabilidade.</p>
+      </div>
+    </div>
+    <div class="callout warning">
+      <span class="callout-icon">⚠️</span>
+      <div>Boas práticas recomendam <strong>triangulação</strong>: combinar pelo menos duas ou três técnicas diferentes para corroborar uma mesma evidência antes de tirar conclusões.</div>
+    </div>
+  </section>
+
+  <section class="section" id="s10">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Relatórios de auditoria</h2>
+    </div>
+    <p>O relatório de auditoria é o produto final do trabalho do auditor. Deve ser claro, objetivo, fundamentado em evidências e útil para quem irá tomar decisões. Identifica achados, avalia o risco associado e apresenta recomendações práticas.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Seção do relatório</th><th>Conteúdo</th></tr></thead>
+        <tbody>
+          <tr><td>Sumário executivo</td><td>Visão geral do escopo, objetivos e principais conclusões para a alta gestão</td></tr>
+          <tr><td>Escopo e metodologia</td><td>O que foi avaliado, como e em qual período</td></tr>
+          <tr><td>Achados</td><td>Desvios ou vulnerabilidades identificadas, com evidências</td></tr>
+          <tr><td>Avaliação de risco</td><td>Classificação de cada achado (crítico, alto, médio, baixo)</td></tr>
+          <tr><td>Recomendações</td><td>Ações corretivas ou preventivas sugeridas pelo auditor</td></tr>
+          <tr><td>Resposta da gestão</td><td>Plano de ação da área auditada com prazos e responsáveis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="highlight-box">
+      <h4>📌 Estrutura de um achado bem redigido</h4>
+      <p>Cada achado deve seguir: <strong>Condição → Critério → Causa → Efeito → Recomendação</strong>. Isso garante clareza sobre o que foi encontrado, qual era o padrão esperado, por que ocorreu, qual impacto tem e o que fazer para corrigir.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ MÓDULO 03 ══════════ -->
+  <section class="section" id="s11">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>O que são controles internos</h2>
+    </div>
+    <p>Controles internos são políticas, procedimentos, práticas e estruturas organizacionais concebidas para fornecer razoável garantia de que os objetivos do negócio serão alcançados e que eventos indesejáveis serão prevenidos ou detectados e corrigidos.</p>
+    <p>O framework <strong>COSO</strong> (Committee of Sponsoring Organizations) é o modelo de referência mais amplamente adotado. Ele define cinco componentes interdependentes:</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <h3>Ambiente de controle</h3>
+        <p>A cultura organizacional, o tom da liderança e os valores éticos que formam a base para todos os outros controles.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚠️</span>
+        <h3>Avaliação de riscos</h3>
+        <p>Processo de identificar e analisar riscos relevantes para o alcance dos objetivos da organização.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <h3>Atividades de controle</h3>
+        <p>Políticas e procedimentos que ajudam a garantir que as diretivas de gestão sejam executadas.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📡</span>
+        <h3>Monitoramento</h3>
+        <p>Avaliação contínua ou periódica da qualidade dos controles internos ao longo do tempo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="s12">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Controles preventivos, detectivos e corretivos</h2>
+    </div>
+    <p>Os controles são classificados de acordo com o momento em que atuam em relação a um evento de risco. Uma estratégia robusta utiliza os três tipos de forma complementar.</p>
+    <h3>🚧 Preventivos</h3>
+    <p>Atuam <strong>antes</strong> do evento indesejado, impedindo que ele ocorra.</p>
+    <p><strong>Exemplos em TI:</strong> autenticação multifator (MFA), controles de acesso baseados em perfil (RBAC), validação de entrada de dados, criptografia de dados em repouso e em trânsito.</p>
+
+    <h3>🔔 Detectivos</h3>
+    <p>Atuam <strong>durante ou após</strong> o evento, identificando que algo indesejado ocorreu.</p>
+    <p><strong>Exemplos em TI:</strong> logs de auditoria, sistemas de detecção de intrusão (IDS/IPS), alertas de transações suspeitas, reconciliações periódicas.</p>
+
+    <h3>🔧 Corretivos</h3>
+    <p>Atuam <strong>após</strong> a detecção do evento, corrigindo o problema e restaurando a normalidade.</p>
+    <p><strong>Exemplos em TI:</strong> plano de recuperação de desastres (DRP), rollback de transações, patches de segurança, restauração de backups.</p>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ️</span>
+      <div>A <strong>defesa em profundidade</strong> (defense in depth) é o princípio de usar camadas dos três tipos de controles, de modo que a falha de um não comprometa todo o sistema de proteção.</div>
+    </div>
+  </section>
+
+  <section class="section" id="s13">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <h2>Controles no desenvolvimento de software</h2>
+    </div>
+    <p>Durante o ciclo de desenvolvimento, é necessário implementar controles que garantam a qualidade, segurança e rastreabilidade do software — o chamado <strong>Secure SDLC</strong>.</p>
+    <ol class="step-list">
+      <li><span class="step-badge">1</span><span><strong>Controle de versão:</strong> uso de Git para rastrear todas as alterações no código, com identificação de quem fez o quê e quando.</span></li>
+      <li><span class="step-badge">2</span><span><strong>Code review:</strong> revisão obrigatória por outro desenvolvedor antes de qualquer merge — controle preventivo contra bugs e vulnerabilidades.</span></li>
+      <li><span class="step-badge">3</span><span><strong>Separação de ambientes:</strong> manter ambientes distintos de desenvolvimento, homologação e produção.</span></li>
+      <li><span class="step-badge">4</span><span><strong>Testes automatizados:</strong> testes unitários, de integração e de segurança (SAST/DAST) no pipeline de CI/CD.</span></li>
+      <li><span class="step-badge">5</span><span><strong>Gerenciamento de mudanças:</strong> toda alteração em produção deve ser aprovada, documentada e testada.</span></li>
+    </ol>
+    <div class="code-label">📄 Exemplo — Pipeline CI/CD com controles de auditoria</div>
+    <pre><code>stages:
+  - lint           # controle preventivo: verifica padrão do código
+  - test           # controle preventivo: testes automatizados
+  - sast_scan      # controle preventivo: análise estática de segurança
+  - code_review    # controle preventivo: aprovação obrigatória
+  - deploy_stg     # deploy em homologação (não produção!)
+  - smoke_test     # controle detectivo: teste pós-deploy
+  - deploy_prod    # deploy em produção (apenas após aprovação)
+  - audit_log      # registra quem fez o deploy, quando e o quê</code></pre>
+  </section>
+
+  <section class="section" id="s14">
+    <div class="section-header">
+      <div class="section-num">14</div>
+      <h2>Controles na operação de sistemas</h2>
+    </div>
+    <p>Após o software ser colocado em produção, um conjunto de controles operacionais garante que o sistema continue funcionando de forma segura, disponível e íntegra ao longo do tempo.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Categoria</th><th>Controle</th><th>Objetivo</th></tr></thead>
+        <tbody>
+          <tr><td>Acesso lógico</td><td>IAM, RBAC, MFA</td><td>Apenas usuários autorizados acessam dados e funções</td></tr>
+          <tr><td>Logs e monitoramento</td><td>SIEM, log centralizado</td><td>Detectar e investigar atividades suspeitas</td></tr>
+          <tr><td>Backup e recuperação</td><td>Backup 3-2-1, DRP</td><td>Disponibilidade e recuperação em caso de falha</td></tr>
+          <tr><td>Gerenciamento de patches</td><td>Ciclo de patching mensal</td><td>Corrigir vulnerabilidades antes que sejam exploradas</td></tr>
+          <tr><td>Separação de funções</td><td>Segregation of duties (SoD)</td><td>Impedir que uma única pessoa controle todo um processo crítico</td></tr>
+          <tr><td>Continuidade</td><td>BCP, testes de DR</td><td>Manter operações essenciais em situações de crise</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="s15">
+    <div class="section-header">
+      <div class="section-num">15</div>
+      <h2>Governança de TI</h2>
+    </div>
+    <p>Governança de TI é o conjunto de estruturas, processos e mecanismos que garantem que a TI suporte e potencialize a estratégia de negócios, gerenciando riscos de forma adequada e assegurando o uso responsável dos recursos.</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <h3>COBIT 2019</h3>
+        <p>Framework da ISACA para governança e gerenciamento de TI. Define objetivos de controle em domínios e processos alinhados ao negócio.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚙️</span>
+        <h3>ITIL 4</h3>
+        <p>Conjunto de boas práticas para gerenciamento de serviços de TI, cobrindo o ciclo de vida completo dos serviços.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔐</span>
+        <h3>ISO/IEC 27001</h3>
+        <p>Norma internacional para Sistemas de Gestão de Segurança da Informação (SGSI). Certificável e reconhecida globalmente.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <h3>ISO/IEC 38500</h3>
+        <p>Norma para governança corporativa de TI, voltada ao uso responsável e eficiente da tecnologia nas organizações.</p>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <h4>🔑 Por que governança importa para desenvolvedores?</h4>
+      <p>A governança de TI define as regras do jogo para qualquer projeto de software: quem aprova, quais padrões seguir, como gerenciar riscos e como reportar. Desenvolvedores que entendem governança conseguem alinhar seu trabalho técnico aos objetivos estratégicos da organização.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ MÓDULO 04 — SOX ══════════ -->
+  <section class="section" id="s16">
+    <div class="section-header">
+      <div class="section-num">16</div>
+      <h2>Contexto da SOX</h2>
+    </div>
+    <p>A <strong>Lei Sarbanes-Oxley (SOX)</strong> foi promulgada nos Estados Unidos em 2002, em resposta a grandes escândalos corporativos como Enron, WorldCom e Tyco, que evidenciaram como fraudes contábeis e falta de transparência podiam destruir empresas inteiras.</p>
+    <div class="callout danger">
+      <span class="callout-icon">⚡</span>
+      <div>A Enron, sétima maior empresa dos EUA, declarou falência em 2001 após revelar que executivos inflaram artificialmente os lucros por anos. Mais de 20.000 funcionários perderam empregos e economias de aposentadoria.</div>
+    </div>
+    <p>Assinada pelo presidente George W. Bush, a SOX criou novos padrões de responsabilidade para executivos de empresas de capital aberto e penalidades criminais severas para fraude corporativa.</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <h3>Seção 302</h3>
+        <p>CEO e CFO devem assinar pessoalmente os relatórios financeiros, atestando sua precisão. Qualquer falsidade configura crime federal.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔬</span>
+        <h3>Seção 404</h3>
+        <p>A gestão deve avaliar e reportar anualmente a eficácia dos controles internos sobre relatórios financeiros. É a seção mais relevante para TI.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <h3>PCAOB</h3>
+        <p>A SOX criou o Public Company Accounting Oversight Board, órgão regulador independente que supervisiona auditorias de empresas públicas nos EUA.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <h3>Penalidades</h3>
+        <p>Executivos que certifiquem relatórios sabidamente falsos podem ser condenados a até 20 anos de prisão e multas de até US$ 5 milhões.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="s17">
+    <div class="section-header">
+      <div class="section-num">17</div>
+      <h2>Por que a SOX impacta TI</h2>
+    </div>
+    <p>Embora a SOX seja uma lei financeira, seus requisitos têm impacto profundo em TI porque praticamente todos os dados financeiros de uma empresa moderna são gerados, armazenados e processados por sistemas de informação.</p>
+    <div class="highlight-box">
+      <h4>💡 A lógica da SOX em TI</h4>
+      <p><strong>Premissa:</strong> Se os sistemas de TI que geram as informações financeiras não são confiáveis, os relatórios financeiros também não serão. Portanto, para assegurar a precisão dos dados financeiros, é necessário auditar e controlar os sistemas que os produzem.</p>
+    </div>
+    <p>A Seção 404 tornou os <strong>ITGCs</strong> (IT General Controls — Controles Gerais de TI) um requisito obrigatório nas auditorias de empresas listadas em bolsas americanas.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Área de TI</th><th>Exigência SOX</th></tr></thead>
+        <tbody>
+          <tr><td>Controle de acesso</td><td>Apenas usuários autorizados podem alterar dados e relatórios financeiros</td></tr>
+          <tr><td>Gestão de mudanças</td><td>Alterações em sistemas financeiros devem ser aprovadas, testadas e documentadas</td></tr>
+          <tr><td>Operações de TI</td><td>Disponibilidade e integridade dos sistemas que suportam processos financeiros</td></tr>
+          <tr><td>Desenvolvimento de software</td><td>Controles no SDLC de sistemas que geram dados financeiros</td></tr>
+          <tr><td>Backup e recuperação</td><td>Dados financeiros devem ser protegidos e recuperáveis</td></tr>
+          <tr><td>Logs de auditoria</td><td>Rastreabilidade de quem acessou e alterou dados financeiros</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="s18">
+    <div class="section-header">
+      <div class="section-num">18</div>
+      <h2>Riscos, controles e auditoria SOX</h2>
+    </div>
+    <p>No contexto SOX, a auditoria é baseada em riscos: identificar processos financeiros críticos, mapear os sistemas de TI que os suportam, avaliar os riscos de distorção material dos relatórios e testar os controles.</p>
+    <ol class="step-list">
+      <li><span class="step-badge">1</span><span><strong>Mapeamento de processos financeiros:</strong> identificar processos críticos (contas a pagar, receitas, folha) e os sistemas que os suportam.</span></li>
+      <li><span class="step-badge">2</span><span><strong>Identificação de ITGCs:</strong> mapear os Controles Gerais de TI relevantes — acesso, gestão de mudanças, operações e desenvolvimento.</span></li>
+      <li><span class="step-badge">3</span><span><strong>Avaliação de risco de TI:</strong> determinar quais falhas de controle poderiam causar distorção material nos relatórios financeiros.</span></li>
+      <li><span class="step-badge">4</span><span><strong>Teste de controles:</strong> verificar se os ITGCs estão operando efetivamente durante todo o período auditado.</span></li>
+      <li><span class="step-badge">5</span><span><strong>Comunicação de deficiências:</strong> reportar fraquezas ao comitê de auditoria e à auditoria externa.</span></li>
+    </ol>
+    <div class="callout warning">
+      <span class="callout-icon">⚠️</span>
+      <div>Uma <strong>deficiência material</strong> (material weakness) em controles de TI SOX é extremamente séria: pode forçar a empresa a reapresentar relatórios financeiros, colapsar o preço das ações e expor executivos à responsabilidade criminal.</div>
+    </div>
+  </section>
+
+  <section class="section" id="s19">
+    <div class="section-header">
+      <div class="section-num">19</div>
+      <h2>Software, dados e responsabilidade legal</h2>
+    </div>
+    <p>A SOX criou uma nova realidade: sistemas que processam dados financeiros não são apenas produtos técnicos, mas <strong>instrumentos legalmente regulados</strong>. Falhas de design, ausência de controles ou logs inadequados podem ter consequências jurídicas graves.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ação do desenvolvedor</th><th>Risco SOX associado</th></tr></thead>
+        <tbody>
+          <tr><td>Não implementar log de auditoria</td><td>Falta de rastreabilidade — controle insuficiente para SOX</td></tr>
+          <tr><td>Acesso genérico a dados financeiros</td><td>Violação do princípio do menor privilégio — deficiência de controle</td></tr>
+          <tr><td>Deploy direto em produção sem aprovação</td><td>Ausência de controle de mudanças — risco alto em SOX</td></tr>
+          <tr><td>Sem separação dev/homolog/produção</td><td>Risco de alterações não autorizadas em dados financeiros reais</td></tr>
+          <tr><td>Dados financeiros sem criptografia</td><td>Risco de integridade e confidencialidade</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="highlight-box">
+      <h4>🎓 Reflexão para desenvolvedores</h4>
+      <p>Quando você desenvolve um sistema que processa dados financeiros em uma empresa de capital aberto, seu código passa a ter implicações legais. Decisões como "não vou implementar logs para economizar espaço" podem resultar em não-conformidade com SOX — com consequências que vão muito além da área de TI.</p>
+    </div>
+    <div class="callout tip">
+      <span class="callout-icon">✅</span>
+      <div>Adotar práticas de <strong>Secure SDLC</strong>, controle de acesso rigoroso, logging adequado e gerenciamento formal de mudanças não é burocracia — é o que diferencia software corporativo profissional de código amador com risco legal.</div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+  const links = document.querySelectorAll('.sidebar nav a');
+  const sections = [...links].map(l => document.querySelector(l.getAttribute('href')));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = [...links].find(l => l.getAttribute('href') === '#' + e.target.id);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => s && obs.observe(s));
+</script>
+</body>
+</html>
