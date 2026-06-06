@@ -660,6 +660,112 @@
       .recursos-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px; }
     }
+
+    /* ─── VÍDEO ──────────────────────────── */
+    .video-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .video-thumb {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
+
+    .video-thumb img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .3s ease;
+    }
+
+    .video-thumb:hover img { transform: scale(1.02); }
+
+    .video-thumb .play-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,.35);
+      transition: transform .2s, background .2s;
+    }
+
+    .video-thumb:hover .play-btn {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: #fff;
+    }
+
+    .video-thumb .play-btn::after {
+      content: '';
+      display: block;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 12px 0 12px 22px;
+      border-color: transparent transparent transparent #FF0000;
+      margin-left: 4px;
+    }
+
+    .video-thumb .yt-badge {
+      position: absolute;
+      bottom: 12px; right: 12px;
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      padding: 4px 10px;
+      border-radius: 5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .video-thumb .yt-badge::before {
+      content: '';
+      width: 14px; height: 10px;
+      background: #FF0000;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .video-caption {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .video-caption .yt-icon {
+      width: 32px; height: 32px;
+      background: #FF0000;
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    .video-caption-text strong {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .video-caption-text span {
+      font-size: 12px;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -673,6 +779,7 @@
   <nav class="topbar-nav">
     <a href="#apostilas">Apostilas</a>
     <a href="#cronograma">Cronograma</a>
+    <a href="#video">Vídeo</a>
     <a href="#recursos">Recursos</a>
   </nav>
 </header>
@@ -747,6 +854,31 @@
         <li>Métricas de software: pontos de função, métricas de processo e produto, análise de qualidade</li>
         <li>Normas de qualidade de software: ISO/IEC 25010 e modelos de maturidade (CMMI)</li>
       </ul>
+    </div>
+  </div>
+
+
+  <!-- ── Vídeo de apresentação ── -->
+  <div class="section-label" id="video">
+    <h2>Apresentação da disciplina</h2>
+  </div>
+
+  <div class="video-wrap">
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+      <iframe
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+        src="https://www.youtube.com/embed/iXRea88B-1o"
+        title="Apresentação da disciplina — Métricas e Auditoria de Software"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="video-caption">
+      <div class="yt-icon">▶</div>
+      <div class="video-caption-text">
+        <strong>Métricas e Auditoria de Software — Apresentação da disciplina</strong>
+        <span>Prof. William Firmino · Faculdade de Tecnologia Senac Rio</span>
+      </div>
     </div>
   </div>
 
