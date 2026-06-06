@@ -670,89 +670,47 @@
       box-shadow: var(--shadow);
     }
 
-    .video-thumb {
+    .video-player-container {
       position: relative;
       padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
-      cursor: pointer;
-      display: block;
-      text-decoration: none;
+      background: #000;
     }
 
-    .video-thumb img {
+    .video-player-container iframe {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform .3s ease;
+      border: none;
     }
 
-    .video-thumb:hover img { transform: scale(1.02); }
-
-    .video-thumb .play-btn {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 72px; height: 72px;
-      background: rgba(255,255,255,.95);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 24px rgba(0,0,0,.35);
-      transition: transform .2s, background .2s;
+    .video-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
+      gap: 12px;
     }
 
-    .video-thumb:hover .play-btn {
-      transform: translate(-50%, -50%) scale(1.1);
-      background: #fff;
-    }
-
-    .video-thumb .play-btn::after {
-      content: '';
-      display: block;
-      width: 0; height: 0;
-      border-style: solid;
-      border-width: 12px 0 12px 22px;
-      border-color: transparent transparent transparent #FF0000;
-      margin-left: 4px;
-    }
-
-    .video-thumb .yt-badge {
-      position: absolute;
-      bottom: 12px; right: 12px;
-      background: rgba(0,0,0,.75);
-      color: #fff;
-      font-size: 11px;
-      font-family: 'DM Mono', monospace;
-      padding: 4px 10px;
-      border-radius: 5px;
-      display: flex; align-items: center; gap: 6px;
-    }
-
-    .video-thumb .yt-badge::before {
-      content: '';
-      width: 14px; height: 10px;
-      background: #FF0000;
-      border-radius: 2px;
-      display: inline-block;
-    }
-
-    .video-caption {
+    .video-info {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: var(--surface2);
+      flex: 1;
+      min-width: 0;
     }
 
-    .video-caption .yt-icon {
+    .yt-icon {
       width: 32px; height: 32px;
       background: #FF0000;
       border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
-      font-size: 14px;
+      font-size: 13px;
+      color: #fff;
     }
 
     .video-caption-text strong {
@@ -760,11 +718,57 @@
       font-size: 13.5px;
       font-weight: 600;
       color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .video-caption-text span {
       font-size: 12px;
       color: var(--muted);
+    }
+
+    .video-seek-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .seek-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border: 1px solid var(--ore-border);
+      border-radius: 8px;
+      background: var(--ore-soft);
+      color: var(--ore-deep);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, transform .1s;
+      white-space: nowrap;
+    }
+
+    .seek-btn:hover {
+      background: var(--ore);
+      border-color: var(--ore);
+      color: #fff;
+      transform: scale(1.04);
+    }
+
+    .seek-btn:active { transform: scale(.97); }
+
+    .seek-btn svg {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+    }
+
+    .seek-btn.disabled {
+      opacity: .4;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -864,23 +868,85 @@
   </div>
 
   <div class="video-wrap">
-    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
-      <iframe
-        style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
-        src="https://www.youtube.com/embed/iXRea88B-1o"
-        title="Apresentação da disciplina — Métricas e Auditoria de Software"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen>
-      </iframe>
+    <div class="video-player-container">
+      <div id="yt-player"></div>
     </div>
-    <div class="video-caption">
-      <div class="yt-icon">▶</div>
-      <div class="video-caption-text">
-        <strong>Métricas e Auditoria de Software — Apresentação da disciplina</strong>
-        <span>Prof. William Firmino · Faculdade de Tecnologia Senac Rio</span>
+    <div class="video-controls">
+      <div class="video-info">
+        <div class="yt-icon">▶</div>
+        <div class="video-caption-text">
+          <strong>Métricas e Auditoria de Software — Apresentação da disciplina</strong>
+          <span>Prof. William Firmino · Faculdade de Tecnologia Senac Rio</span>
+        </div>
+      </div>
+      <div class="video-seek-btns">
+        <button class="seek-btn" id="btn-back" onclick="seekVideo(-10)" title="Voltar 10 segundos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.99"/>
+            <text x="8" y="16" font-size="7" fill="currentColor" stroke="none" font-family="monospace" font-weight="bold">10</text>
+          </svg>
+          − 10s
+        </button>
+        <button class="seek-btn" id="btn-fwd" onclick="seekVideo(10)" title="Avançar 10 segundos">
+          + 10s
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-.49-3.99"/>
+            <text x="8" y="16" font-size="7" fill="currentColor" stroke="none" font-family="monospace" font-weight="bold">10</text>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
+
+  <script>
+    // Carrega a API do YouTube de forma assíncrona
+    var ytAPIReady = false;
+    var ytPlayer = null;
+
+    function loadYTAPI() {
+      if (document.getElementById('yt-api-script')) return;
+      var tag = document.createElement('script');
+      tag.id = 'yt-api-script';
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(tag);
+    }
+
+    // Chamada pela API quando pronta
+    function onYouTubeIframeAPIReady() {
+      ytAPIReady = true;
+      ytPlayer = new YT.Player('yt-player', {
+        videoId: 'iXRea88B-1o',
+        playerVars: {
+          rel: 0,
+          modestbranding: 1,
+          controls: 1
+        },
+        events: {
+          onReady: function(e) {
+            document.getElementById('btn-back').classList.remove('disabled');
+            document.getElementById('btn-fwd').classList.remove('disabled');
+          }
+        }
+      });
+    }
+
+    function seekVideo(seconds) {
+      if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+      var current = ytPlayer.getCurrentTime();
+      ytPlayer.seekTo(Math.max(0, current + seconds), true);
+    }
+
+    // Inicializa quando a seção de vídeo aparecer na tela (lazy load)
+    var videoObserver = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        loadYTAPI();
+        videoObserver.disconnect();
+      }
+    }, { threshold: 0.1 });
+
+    var videoSection = document.getElementById('video');
+    if (videoSection) videoObserver.observe(videoSection);
+  </script>
 
   <!-- ── Cronograma ── -->
   <div class="section-label" id="cronograma">
